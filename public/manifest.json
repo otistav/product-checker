@@ -1,6 +1,6 @@
 {
-  "name": "Template",
-  "description": "This is template extensions",
+  "name": "Product-Checker",
+  "description": "Check your web page content and get notified when something changes",
   "version": "1.0",
   "manifest_version": 3,
   "action": {},

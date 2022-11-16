@@ -1,4 +1,5 @@
 import constants, { HoverStyle } from "./utils/constants";
+import { getAll, set } from "./utils/storage";
 
 type State = {
   applicationEnabled: boolean;
@@ -12,8 +13,41 @@ let state: State = {
   helperPressed: false,
 }
 
-const onMaskClick = (e: MouseEvent) => {
+const getNodePath = (hoverObj: HTMLElement) => {
+  const path = []; // To save the path of the node element that need to get to the root element
+  let node = hoverObj;
+  console.log(node, 'node');
+  const root = document.body;
+  while (node !== root) {
+    const parent = node.parentElement;
+    console.log(parent, 'parent');
+    if (!parent) break;
+    const children = Array.from(parent.children);
+    const nodeIndex = children.indexOf(node);
+    console.log(path, 'path')
+    path.push(nodeIndex);
+    console.log(path, 'path after')
+    node = parent;
+  }
+  return path.reverse();
+}
+
+const getElementByPath = (path: number[]) => {
+  let elem: any = document.body;
+  for (let index of path) {
+    elem = elem.children[index];
+  }
+  return elem;
+}
+
+const onMaskClick = async (e: MouseEvent) => {
   console.log(e, 'event');
+  const hoverObject = document.elementsFromPoint(e.clientX, e.clientY)[1];
+  const path = getNodePath(hoverObject as HTMLElement);
+  const html = (hoverObject as HTMLElement).outerHTML;
+  await set({ html, path, url: window.location.href, name: 'test' });
+  console.log(await getAll());
+  console.log(getElementByPath(path).outerHTML === html);
 }
 
 const onKeyDown = (e: KeyboardEvent, state: State): State => {
